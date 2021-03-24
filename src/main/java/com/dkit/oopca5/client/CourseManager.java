@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+
 import com.dkit.oopca5.core.Course;
+import com.dkit.oopca5.core.Student;
 import com.dkit.oopca5.server.CourseDaoInterface;
 import com.dkit.oopca5.server.MySqlCourseDao;
 import com.dkit.oopca5.Exceptions.DaoException;
@@ -30,16 +32,35 @@ public class CourseManager {
     // Requires fast access given courseId.
 
     public CourseManager() {
-        courseMap = new HashMap<>();
+        CourseDaoInterface courseDao = new MySqlCourseDao();
 
-        // Hardcode some values to get started
-        // load from text file "courses.dat" and populate coursesMap
+        try {
+            List<Course> courseList = courseDao.getAllCourses();
+            for(Course course : courseList)
+            {
+                courseMap.put(course.getCourseId(), course);
+            }
+            System.out.println("courseMap dump: " + courseMap);
+
+
+        } catch (
+                DaoException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public Course getCourse(String courseId )
     {
-        Course course = courseMap.get(courseId);
-        return new Course(course); //clone
+       CourseDaoInterface courseDao = new MySqlCourseDao();
+        try {
+            Course course = courseDao.findCourse(courseId);
+            return course;
+        } catch (
+                DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<Course> getAllCourses()
@@ -71,69 +92,6 @@ public class CourseManager {
         courseMap.remove(courseId);
     }
 
-
-    public void saveCoursesToFile()
-    {
-        ArrayList<Course> clonedList = new ArrayList<>(); //cloned list of students
-
-        for(Map.Entry<String, Course> entry : courseMap.entrySet())
-        {
-            Course course = entry.getValue();
-            clonedList.add(new Course(course));
-        }
-
-        try(BufferedWriter courseFile = new BufferedWriter(new FileWriter("Courses.txt") ))
-        {
-
-            for(Course course : clonedList)
-            {
-                courseFile.write(course.getCourseId() + " " + course.getLevel() + " " + course.getTitle() + " " + course.getInstitution());
-                courseFile.write("\n");
-            }
-        }
-        catch(IOException ioe)
-        {
-            System.out.println("Could not save courses.");
-        }
-    }
-
-    protected void loadCoursesFromFile()
-    {
-        System.out.println("Reading course DB from file...");
-
-        try {
-            Scanner courseFile = new Scanner(new File("Courses.txt"));
-
-            while (courseFile.hasNext())
-            {
-
-
-                String courseID = courseFile.next();
-
-                String level = courseFile.next();
-                String title= courseFile.next();
-                String institution= courseFile.next();
-
-
-                System.out.println("Course ID: " + courseID + " Level: " + level + " Title: " + title + " Institution: " + institution);
-                Course course = new Course(courseID, level, title, institution);
-                courseMap.put(course.getCourseId(), new Course(course));
-
-            }
-            System.out.println("All courses loaded");
-            courseFile.close();
-            //     System.out.println("All Courses: " + courseMap); // print them all
-
-        }
-        catch (IOException e)
-        {
-            System.out.println("IOException thrown in loadCoursesFromFile() "+e.getMessage());
-        }
-
-    }
-
-
-    // editCourse(courseId);       // not required for this iteration
 
 }
 
