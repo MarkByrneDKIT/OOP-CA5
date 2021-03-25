@@ -36,27 +36,56 @@ public class CAOClient
         Course c = courseManager.getCourse("DK821");
         System.out.println("Course: DK821: " + c);
 
+
+        loginMenu();
+        mainMenu();
+
+    }
+
+    private static void loginMenu()
+    {
+        StudentManager studentManager = new StudentManager();
+
+        CourseManager courseManager = new CourseManager();
+
+        CourseChoicesManager choicesManager = new CourseChoicesManager(studentManager, courseManager);
+
         LoginMenuOptions optionSelect = LoginMenuOptions.CONTINUE;
 
         while(optionSelect != LoginMenuOptions.QUIT)
         {
             try
             {
-                loginMenu();
+                loginMenu2();
                 optionSelect = LoginMenuOptions.values()[Integer.parseInt(keyboard.nextLine().trim())];
                 switch(optionSelect)
                 {
                     case REGISTER:
-                        System.out.println("Please Enter Your CaoNumber: ");
-                        String newCaoNum = kb.next();
-                        System.out.println("Please Enter your Date of Birth: ");
+                        System.out.print("Please Enter Your CaoNumber: ");
+                        int newCaoNum = kb.nextInt();
+                        System.out.print("Please Enter your Date of Birth: ");
                         String newDoB = kb.next();
-                        System.out.println("Please Enter Your Password: ");
+                        System.out.print("Please Enter Your Password: ");
                         String newPassword = kb.next();
+
+                        Student newS = new Student(newCaoNum, newDoB, newPassword);
+
+                        if(choicesManager.register(newS) == true)
+                        {
+                            System.out.println("Successfully Registered!");
+                            optionSelect = LoginMenuOptions.QUIT;
+                        }
+                        else
+                        {
+                            System.out.println("Failed to register");
+                        }
                         break;
 
                     case LOGIN:
-
+                        System.out.print("Please Enter Your CaoNumber: ");
+                        String caoNum = kb.next();
+                        System.out.println("Please Enter Your Password: ");
+                        String password = kb.next();
                         break;
 
                     case QUIT:
@@ -75,8 +104,6 @@ public class CAOClient
                 System.out.println("Selection out of range. Please try again.");
             }
         }
-        mainMenu();
-
     }
 
     private static void mainMenu()
@@ -144,7 +171,7 @@ public class CAOClient
         }
     }
 
-    private static void loginMenu()
+    private static void loginMenu2()
     {
         System.out.println("\n Enter: ");
         System.out.println(("\t1. Register"));

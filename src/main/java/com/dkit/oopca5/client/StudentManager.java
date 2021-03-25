@@ -29,7 +29,6 @@ public class StudentManager {
             {
                 studentMap.put(student.getCaoNumber(), student);
             }
-            System.out.println("studentMap dump: " + studentMap);
 
 
         } catch (

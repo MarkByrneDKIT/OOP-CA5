@@ -88,10 +88,7 @@ public class MySqlStudentDao extends MySqlDao implements StudentDaoInterface
             //Using a PreparedStatement to execute SQL...
             success = (ps.executeUpdate() == 1);
 
-            while (rs.next())
-            {
 
-            }
         } catch (SQLException e)
         {
             throw new DaoException("registerStudent() " + e.getMessage());
@@ -117,6 +114,59 @@ public class MySqlStudentDao extends MySqlDao implements StudentDaoInterface
             }
         }
         return success;     // may be empty
+    }
+
+
+    public Student findStudent(int caoNumber) throws DaoException
+    {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Student s = null;
+
+        try
+        {
+            //Get connection object using the methods in the super class (MySqlDao.java)...
+            con = this.getConnection();
+
+            String query = "SELECT * FROM STUDENT WHERE caoNumber = ?";
+            ps = con.prepareStatement(query);
+
+            //Using a PreparedStatement to execute SQL...
+            rs = ps.executeQuery();
+            if(rs.next())
+            {
+                caoNumber = rs.getInt("CAONUMBER");
+                String dateOfBirth = rs.getString("DATE_OF_BIRTH");
+                String password = rs.getString("PASSWORD");
+
+                s = new Student(caoNumber, dateOfBirth, password);
+            }
+        } catch (SQLException e)
+        {
+            throw new DaoException("findAllUsers() " + e.getMessage());
+        } finally
+        {
+            try
+            {
+                if (rs != null)
+                {
+                    rs.close();
+                }
+                if (ps != null)
+                {
+                    ps.close();
+                }
+                if (con != null)
+                {
+                    freeConnection(con);
+                }
+            } catch (SQLException e)
+            {
+                throw new DaoException("findAllUsers() " + e.getMessage());
+            }
+        }
+        return s;     // may be empty
     }
 }
 

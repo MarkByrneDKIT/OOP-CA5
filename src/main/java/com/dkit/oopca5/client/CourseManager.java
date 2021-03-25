@@ -40,7 +40,6 @@ public class CourseManager {
             {
                 courseMap.put(course.getCourseId(), course);
             }
-            System.out.println("courseMap dump: " + courseMap);
 
 
         } catch (

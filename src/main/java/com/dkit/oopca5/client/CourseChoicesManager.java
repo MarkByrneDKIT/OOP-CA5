@@ -1,8 +1,11 @@
 package com.dkit.oopca5.client;
 
 
+import com.dkit.oopca5.Exceptions.DaoException;
 import com.dkit.oopca5.core.Course;
 import com.dkit.oopca5.core.Student;
+import com.dkit.oopca5.server.MySqlStudentDao;
+import com.dkit.oopca5.server.StudentDaoInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,6 +95,22 @@ public class CourseChoicesManager {
         }
     }
 
+    boolean register(Student S)
+    {
+        StudentDaoInterface studentDao = new MySqlStudentDao();
+        boolean studentRegister = false;
+
+        try {
+            studentRegister = studentDao.registerStudent(S);
+
+
+
+        } catch (
+                DaoException e) {
+            e.printStackTrace();
+        }
+        return studentRegister;
+    }
 
 }
 
