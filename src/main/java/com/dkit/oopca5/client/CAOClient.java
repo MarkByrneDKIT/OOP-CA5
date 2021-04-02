@@ -70,7 +70,7 @@ public class CAOClient
 
                         Student newS = new Student(newCaoNum, newDoB, newPassword);
 
-                        if(choicesManager.register(newS) == true)
+                        if(choicesManager.register(newS))
                         {
                             System.out.println("Successfully Registered!");
                             optionSelect = LoginMenuOptions.QUIT;
@@ -83,9 +83,20 @@ public class CAOClient
 
                     case LOGIN:
                         System.out.print("Please Enter Your CaoNumber: ");
-                        String caoNum = kb.next();
-                        System.out.println("Please Enter Your Password: ");
+                        int caoNum = kb.nextInt();
+                        System.out.print("Please Enter Your Password: ");
                         String password = kb.next();
+
+                        Student loggedIn = choicesManager.login(caoNum);
+                        if(loggedIn != null)
+                        {
+                            System.out.println("Successfully Logged In!");
+                            optionSelect = LoginMenuOptions.QUIT;
+                        }
+                        else
+                        {
+                            System.out.println("Failed To Log In");
+                        }
                         break;
 
                     case QUIT:
@@ -102,6 +113,9 @@ public class CAOClient
             catch(ArrayIndexOutOfBoundsException e)
             {
                 System.out.println("Selection out of range. Please try again.");
+            }
+            catch (DaoException throwables) {
+                throwables.printStackTrace();
             }
         }
     }

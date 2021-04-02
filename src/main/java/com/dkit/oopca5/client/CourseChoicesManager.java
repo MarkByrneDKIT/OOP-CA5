@@ -19,8 +19,6 @@ import java.util.*;
 
 public class CourseChoicesManager {
 
-
-
     // reference to constructor injected studentManager
     private StudentManager studentManager;
 
@@ -42,8 +40,6 @@ public class CourseChoicesManager {
     CourseChoicesManager(StudentManager studentManager, CourseManager courseManager) {
         this.studentManager = studentManager;
         this.courseManager = courseManager;
-
-
 
     }
 
@@ -74,25 +70,13 @@ public class CourseChoicesManager {
         return courseManager.getAllCourses();
     }
 
-    boolean login(int caoNumber, String dateOfBirth, String password) {
-        if(studentManager.getStudent(caoNumber) == null)
-        {
-            System.out.println("CAO Number cannot be found");
-            return false;
-        }
-        else if (!studentManager.getStudent(caoNumber).getPassword().equals(password))
-        {
-            System.out.println("Incorrect Password");
-            return false;
-        }
-        else if (!studentManager.getStudent(caoNumber).getDayOfBirth().equals(dateOfBirth))
-        {
-            System.out.println("Incorrect Date of Birth");
-            return false;
-        }
-        else{
-            return true;
-        }
+    public Student login(int caoNumber) throws DaoException {
+
+        StudentDaoInterface studentDao = new MySqlStudentDao();
+        Student studentLogIn = studentDao.findStudent(caoNumber);
+
+         return studentLogIn;
+
     }
 
     boolean register(Student S)
@@ -111,6 +95,6 @@ public class CourseChoicesManager {
         }
         return studentRegister;
     }
-
 }
+
 

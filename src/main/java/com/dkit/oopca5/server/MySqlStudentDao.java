@@ -132,6 +132,8 @@ public class MySqlStudentDao extends MySqlDao implements StudentDaoInterface
             String query = "SELECT * FROM STUDENT WHERE caoNumber = ?";
             ps = con.prepareStatement(query);
 
+            ps.setInt(1, caoNumber);
+
             //Using a PreparedStatement to execute SQL...
             rs = ps.executeQuery();
             if(rs.next())
@@ -144,7 +146,7 @@ public class MySqlStudentDao extends MySqlDao implements StudentDaoInterface
             }
         } catch (SQLException e)
         {
-            throw new DaoException("findAllUsers() " + e.getMessage());
+            throw new DaoException("findStudent() " + e.getMessage());
         } finally
         {
             try
@@ -163,7 +165,7 @@ public class MySqlStudentDao extends MySqlDao implements StudentDaoInterface
                 }
             } catch (SQLException e)
             {
-                throw new DaoException("findAllUsers() " + e.getMessage());
+                throw new DaoException("findStudent() " + e.getMessage());
             }
         }
         return s;     // may be empty

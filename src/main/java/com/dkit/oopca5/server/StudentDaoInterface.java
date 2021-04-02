@@ -11,5 +11,7 @@ public interface StudentDaoInterface {
 
     public boolean registerStudent(Student s) throws DaoException;
 
+    public Student findStudent(int caoNum) throws DaoException;
+
 
 }
