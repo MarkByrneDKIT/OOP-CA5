@@ -9,12 +9,9 @@ package com.dkit.oopca5.client;
 import com.dkit.oopca5.Exceptions.DaoException;
 import com.dkit.oopca5.core.Course;
 import com.dkit.oopca5.core.Student;
-import com.dkit.oopca5.server.MySqlStudentDao;
-import com.dkit.oopca5.server.StudentDaoInterface;
-import com.dkit.oopca5.server.MySqlCourseDao;
-import com.dkit.oopca5.server.CourseDaoInterface;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -30,18 +27,94 @@ public class CAOClient
 
         CourseManager courseManager = new CourseManager();
 
+        CourseChoicesManager choicesManager = new CourseChoicesManager(studentManager, courseManager);
+
         Student s = studentManager.getStudent(10000001);
         System.out.println("Student: 1000001: " + s);
 
         Course c = courseManager.getCourse("DK821");
         System.out.println("Course: DK821: " + c);
 
+        Student currentStudent = new Student(0,"","");
 
-        loginMenu();
-        mainMenu();
+        LoginMenuOptions optionSelect = LoginMenuOptions.CONTINUE;
+
+        while(optionSelect != LoginMenuOptions.QUIT)
+        {
+            try
+            {
+                loginMenu2();
+                optionSelect = LoginMenuOptions.values()[Integer.parseInt(keyboard.nextLine().trim())];
+                switch(optionSelect)
+                {
+                    case REGISTER:
+                        System.out.print("Please Enter Your CaoNumber: ");
+                        int newCaoNum = kb.nextInt();
+                        System.out.print("Please Enter your Date of Birth: ");
+                        String newDoB = kb.next();
+                        System.out.print("Please Enter Your Password: ");
+                        String newPassword = kb.next();
+
+                        Student newS = new Student(newCaoNum, newDoB, newPassword);
+
+                        if(choicesManager.register(newS))
+                        {
+                            System.out.println("Successfully Registered!");
+                            optionSelect = LoginMenuOptions.QUIT;
+                        }
+                        else
+                        {
+                            System.out.println("Failed to register");
+                        }
+                        break;
+
+                    case LOGIN:
+                        System.out.print("Please Enter Your CaoNumber: ");
+                        int caoNum = kb.nextInt();
+                        currentStudent.setCaoNumber(caoNum);
+                        System.out.print("Please Enter Your Password: ");
+                        String password = kb.next();
+
+
+                        if(choicesManager.login(caoNum, password))
+                        {
+                            System.out.println("Successfully Logged In!");
+                            optionSelect = LoginMenuOptions.QUIT;
+                        }
+                        else
+                        {
+                            System.out.println("Failed To Log In");
+                        }
+                        break;
+
+                    case QUIT:
+                        break;
+
+                    default:
+                        System.out.println("Selection out of range. Try again");
+                }
+            }
+            catch(IllegalArgumentException e)
+            {
+                System.out.println("Selection out of range. Please try again.");
+            }
+            catch(ArrayIndexOutOfBoundsException e)
+            {
+                System.out.println("Selection out of range. Please try again.");
+            }
+            catch (DaoException throwables)
+            {
+                throwables.printStackTrace();
+            }
+        }
+
+
+
+        mainMenu(currentStudent);
 
     }
 
+    /*
     private static void loginMenu()
     {
         StudentManager studentManager = new StudentManager();
@@ -114,13 +187,16 @@ public class CAOClient
             {
                 System.out.println("Selection out of range. Please try again.");
             }
-            catch (DaoException throwables) {
+            catch (DaoException throwables)
+            {
                 throwables.printStackTrace();
             }
         }
     }
+    */
 
-    private static void mainMenu()
+
+    private static void mainMenu(Student currentStudent)
     {
         StudentManager studentManager = new StudentManager();
 
@@ -156,11 +232,29 @@ public class CAOClient
 
 
                     case DISPLAY_CURRENT_CHOICES:
-
+                        int numberCao = currentStudent.getCaoNumber();
+                        String caoNumber = Integer.toString(numberCao);
+                        List<String> choices = choicesManager.getStudentChoices(caoNumber);
+                        for(int i = 0; i < choices.size(); i++)
+                        {
+                            System.out.println(choices.get(i));
+                        }
                         break;
 
                     case UPDATE_CURRENT_CHOICES:
+                        System.out.print("How many choices would you like to add? ->");
+                        int amount = kb.nextInt();
 
+                        int caoNum2 = currentStudent.getCaoNumber();
+                        List<String> newChoices = new ArrayList<>();
+
+                        for(int i = 0; i < amount; i++)
+                        {
+                            System.out.print("Please enter the CourseID: ");
+                            String newCourseID = kb.next();
+                            newChoices.add(newCourseID);
+                        }
+                        choicesManager.updateChoices(caoNum2, newChoices);
                         break;
 
 
@@ -181,6 +275,10 @@ public class CAOClient
             catch(ArrayIndexOutOfBoundsException e)
             {
                 System.out.println("Selection out of range. Please try again.");
+            }
+            catch (DaoException throwables)
+            {
+                throwables.printStackTrace();
             }
         }
     }

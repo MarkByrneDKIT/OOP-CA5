@@ -13,5 +13,7 @@ public interface StudentDaoInterface {
 
     public Student findStudent(int caoNum) throws DaoException;
 
+    public boolean login(int caoNumber, String password) throws DaoException;
+
 
 }
