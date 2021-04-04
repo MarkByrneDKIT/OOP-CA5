@@ -1,5 +1,7 @@
 package com.dkit.oopca5.core;
 
+import java.util.Objects;
+
 public class Student {
     private int caoNumber;  // In the CAO system, cao number is unique identifier for student
     private String dateOfBirth; // yyyy-mm-dd
@@ -60,6 +62,19 @@ public class Student {
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return caoNumber == student.caoNumber && Objects.equals(dateOfBirth, student.dateOfBirth) && Objects.equals(password, student.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(caoNumber, dateOfBirth, password);
     }
 }
 

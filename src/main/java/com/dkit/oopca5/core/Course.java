@@ -1,6 +1,8 @@
 package com.dkit.oopca5.core;
 
 
+import java.util.Objects;
+
 public class Course {
 
     private String courseId;   // e.g. DK821
@@ -65,6 +67,19 @@ public class Course {
                 ", title='" + title + '\'' +
                 ", institution='" + institution + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return Objects.equals(courseId, course.courseId) && Objects.equals(level, course.level) && Objects.equals(title, course.title) && Objects.equals(institution, course.institution);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(courseId, level, title, institution);
     }
 }
 

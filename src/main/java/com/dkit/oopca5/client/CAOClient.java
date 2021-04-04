@@ -33,6 +33,11 @@ public class CAOClient
 
         RegexChecker regexChecker = new RegexChecker();
 
+        Student s = new Student(0,"","");
+        s =studentManager.getStudent(10000001);
+        System.out.println(s);
+
+
         Student currentStudent = new Student(0,"","");
 
         LoginMenuOptions optionSelect = LoginMenuOptions.CONTINUE;
