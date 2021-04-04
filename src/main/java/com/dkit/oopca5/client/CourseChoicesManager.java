@@ -47,18 +47,6 @@ public class CourseChoicesManager {
 
     }
 
-    public Student getStudentDetails(int caoNumber)
-    {
-        Student student = studentManager.getStudent(caoNumber);
-        return student;
-    }
-
-    public Course getCourseDetails(String courseId)
-    {
-        Course course = courseManager.getCourse(courseId);
-        return course;
-    }
-
     public List<String> getStudentChoices(String caoNumber)
     {
         List<String> courseChoices = new ArrayList<>();

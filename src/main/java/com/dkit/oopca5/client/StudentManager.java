@@ -42,35 +42,6 @@ public class StudentManager {
         return new Student(student); //clone
     }
 
-    public void addStudent(Student student)
-    {
-        if(student != null)
-        {
-            studentMap.put(student.getCaoNumber(), new Student(student));   //clone the student and add to clone list
-        }
-        //   else
-        //  {
-        //       throw new illegalArgumentException();
-        //   }
-    }
-
-    public List<Student> getAllStudents()
-    {
-        ArrayList<Student> clonedList = new ArrayList<>(); //cloned list of students
-
-        for(Map.Entry<Integer, Student> entry : studentMap.entrySet())
-        {
-            Student student = entry.getValue();
-            clonedList.add(new Student(student));
-        }
-        return clonedList;
-    }
-
-
-    public void removeStudent(int caoNumber)
-    {
-        studentMap.remove(caoNumber);
-    }
 
 
 

@@ -7,8 +7,10 @@ package com.dkit.oopca5.client;
  */
 
 import com.dkit.oopca5.Exceptions.DaoException;
+import com.dkit.oopca5.core.Colours;
 import com.dkit.oopca5.core.Course;
 import com.dkit.oopca5.core.Student;
+import com.dkit.oopca5.client.RegexChecker;
 
 
 import java.util.ArrayList;
@@ -29,11 +31,7 @@ public class CAOClient
 
         CourseChoicesManager choicesManager = new CourseChoicesManager(studentManager, courseManager);
 
-        Student s = studentManager.getStudent(10000001);
-        System.out.println("Student: 1000001: " + s);
-
-        Course c = courseManager.getCourse("DK821");
-        System.out.println("Course: DK821: " + c);
+        RegexChecker regexChecker = new RegexChecker();
 
         Student currentStudent = new Student(0,"","");
 
@@ -48,23 +46,69 @@ public class CAOClient
                 switch(optionSelect)
                 {
                     case REGISTER:
-                        System.out.print("Please Enter Your CaoNumber: ");
-                        int newCaoNum = kb.nextInt();
-                        System.out.print("Please Enter your Date of Birth: ");
-                        String newDoB = kb.next();
-                        System.out.print("Please Enter Your Password: ");
-                        String newPassword = kb.next();
+                        boolean success1 = false;
+                        boolean success2 = false;
+                        boolean success3 = false;
+                        Student newS = new Student(0,"","");
+                        int newCaoNum = 0;
+                        String newDoB = "";
+                        String newPassword = "";
 
-                        Student newS = new Student(newCaoNum, newDoB, newPassword);
+                        while(success1 == false && success2 == false && success3 == false)
+                        {
+                            try {
+                                String pattern1 = "^[0-9]{8}$";
+                                System.out.print("Please Enter Your CaoNumber: ");
+                                newCaoNum = kb.nextInt();
+                                String caoNumString = Integer.toString(newCaoNum);
+                                if(RegexChecker.checkFormat(caoNumString,pattern1))
+                                {
+                                    success1 = true;
+                                }
+                            }
+                            catch (IllegalArgumentException e) {
+                                e.printStackTrace();
+                            }
+                            try
+                            {
+                                String pattern2 = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$";      //YYYY-MM-DD
 
+                                System.out.print("Please Enter your Date of Birth: ");
+                                newDoB = kb.next();
+
+                                if(RegexChecker.checkFormat(newDoB,pattern2))
+                                {
+                                    success2 = true;
+                                }
+                            }
+                            catch (IllegalArgumentException e) {
+                                e.printStackTrace();
+                            }
+                            try
+                            {
+                                String pattern3 = "^([A-Za-z][0-9])*";  //More than 7 And Contains Letters And Numbers
+                                System.out.print("Please Enter Your Password: ");
+                                newPassword = kb.next();
+
+                                if(RegexChecker.checkFormat(newPassword,pattern3))
+                                {
+                                    success3 = true;
+                                }
+                            }
+                            catch (IllegalArgumentException e) {
+                                e.printStackTrace();
+                            }
+
+                            newS = new Student(newCaoNum, newDoB, newPassword);
+                        }
                         if(choicesManager.register(newS))
                         {
-                            System.out.println("Successfully Registered!");
+                            System.out.println(Colours.GREEN + "Successfully Registered!" + Colours.RESET);
                             optionSelect = LoginMenuOptions.QUIT;
                         }
                         else
                         {
-                            System.out.println("Failed to register");
+                            System.out.println(Colours.RED + "Failed to register" + Colours.RESET);
                         }
                         break;
 
@@ -78,12 +122,12 @@ public class CAOClient
 
                         if(choicesManager.login(caoNum, password))
                         {
-                            System.out.println("Successfully Logged In!");
+                            System.out.println(Colours.GREEN + "Successfully Logged In!" + Colours.RESET);
                             optionSelect = LoginMenuOptions.QUIT;
                         }
                         else
                         {
-                            System.out.println("Failed To Log In");
+                            System.out.println(Colours.RED + "Failed To Log In" + Colours.RESET);
                         }
                         break;
 
@@ -91,109 +135,26 @@ public class CAOClient
                         break;
 
                     default:
-                        System.out.println("Selection out of range. Try again");
+                        System.out.println(Colours.RED + "Selection out of range. Try again" + Colours.RESET);
                 }
             }
             catch(IllegalArgumentException e)
             {
-                System.out.println("Selection out of range. Please try again.");
+                System.out.println(Colours.RED + "Selection out of range. Please try again." + Colours.RESET);
             }
             catch(ArrayIndexOutOfBoundsException e)
             {
-                System.out.println("Selection out of range. Please try again.");
+                System.out.println(Colours.RED + "Selection out of range. Please try again." + Colours.RESET);
             }
             catch (DaoException throwables)
             {
                 throwables.printStackTrace();
             }
         }
-
-
 
         mainMenu(currentStudent);
 
     }
-
-    /*
-    private static void loginMenu()
-    {
-        StudentManager studentManager = new StudentManager();
-
-        CourseManager courseManager = new CourseManager();
-
-        CourseChoicesManager choicesManager = new CourseChoicesManager(studentManager, courseManager);
-
-        LoginMenuOptions optionSelect = LoginMenuOptions.CONTINUE;
-
-        while(optionSelect != LoginMenuOptions.QUIT)
-        {
-            try
-            {
-                loginMenu2();
-                optionSelect = LoginMenuOptions.values()[Integer.parseInt(keyboard.nextLine().trim())];
-                switch(optionSelect)
-                {
-                    case REGISTER:
-                        System.out.print("Please Enter Your CaoNumber: ");
-                        int newCaoNum = kb.nextInt();
-                        System.out.print("Please Enter your Date of Birth: ");
-                        String newDoB = kb.next();
-                        System.out.print("Please Enter Your Password: ");
-                        String newPassword = kb.next();
-
-                        Student newS = new Student(newCaoNum, newDoB, newPassword);
-
-                        if(choicesManager.register(newS))
-                        {
-                            System.out.println("Successfully Registered!");
-                            optionSelect = LoginMenuOptions.QUIT;
-                        }
-                        else
-                        {
-                            System.out.println("Failed to register");
-                        }
-                        break;
-
-                    case LOGIN:
-                        System.out.print("Please Enter Your CaoNumber: ");
-                        int caoNum = kb.nextInt();
-                        System.out.print("Please Enter Your Password: ");
-                        String password = kb.next();
-
-                        Student loggedIn = choicesManager.login(caoNum);
-                        if(loggedIn != null)
-                        {
-                            System.out.println("Successfully Logged In!");
-                            optionSelect = LoginMenuOptions.QUIT;
-                        }
-                        else
-                        {
-                            System.out.println("Failed To Log In");
-                        }
-                        break;
-
-                    case QUIT:
-                        break;
-
-                    default:
-                        System.out.println("Selection out of range. Try again");
-                }
-            }
-            catch(IllegalArgumentException e)
-            {
-                System.out.println("Selection out of range. Please try again.");
-            }
-            catch(ArrayIndexOutOfBoundsException e)
-            {
-                System.out.println("Selection out of range. Please try again.");
-            }
-            catch (DaoException throwables)
-            {
-                throwables.printStackTrace();
-            }
-        }
-    }
-    */
 
 
     private static void mainMenu(Student currentStudent)
@@ -264,17 +225,17 @@ public class CAOClient
 
 
                     default:
-                        System.out.println("Selection out of range. Try again");
+                        System.out.println(Colours.RED + "Selection out of range. Try again" + Colours.RESET);
 
                 }
             }
             catch(IllegalArgumentException e)
             {
-                System.out.println("Selection out of range. Please try again.");
+                System.out.println(Colours.RED + "Selection out of range. Please try again." + Colours.RESET);
             }
             catch(ArrayIndexOutOfBoundsException e)
             {
-                System.out.println("Selection out of range. Please try again.");
+                System.out.println(Colours.RED + "Selection out of range. Please try again." + Colours.RESET);
             }
             catch (DaoException throwables)
             {
@@ -285,23 +246,21 @@ public class CAOClient
 
     private static void loginMenu2()
     {
-        System.out.println("\n Enter: ");
+        System.out.println(Colours.GREEN + "\n Enter: " + Colours.RESET);
         System.out.println(("\t1. Register"));
         System.out.println(("\t2. Login"));
-        System.out.println(("\t3. Quit"));
-        System.out.print(("\n Selection ->"));
-        System.out.println();
+        System.out.println((Colours.RED + "\t3. Quit" + Colours.RESET));
+        System.out.print((Colours.PURPLE + "\n Selection -> " + Colours.RESET));
     }
 
     private static void menu ()
     {
-        System.out.println("\n Enter: ");
+        System.out.println(Colours.GREEN + "\n Enter: " + Colours.RESET);
         System.out.println(("\t1. Display Course"));
         System.out.println(("\t2. Display All Courses"));
         System.out.println(("\t3. Display All Current Choices"));
         System.out.println(("\t4. Update Choices"));
-        System.out.println(("\t6. Quit"));
-        System.out.print(("\n Selection ->"));
-        System.out.println();
+        System.out.println((Colours.RED + "\t6. Quit" + Colours.RESET));
+        System.out.print((Colours.PURPLE + "\n Selection -> " + Colours.RESET));
     }
 }

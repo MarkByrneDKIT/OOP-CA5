@@ -74,23 +74,6 @@ public class CourseManager {
         return clonedList;
     }
 
-    public void addCourse(Course course)
-    {
-        if(course != null)
-        {
-            courseMap.put(course.getCourseId(), new Course(course));
-        }
-        //   else
-        //  {
-        //       throw new illegalArgumentException();
-        //   }
-    }
-
-    public void removeCourse(String courseId)
-    {
-        courseMap.remove(courseId);
-    }
-
 
 }
 
