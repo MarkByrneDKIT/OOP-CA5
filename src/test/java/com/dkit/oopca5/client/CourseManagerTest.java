@@ -5,8 +5,11 @@
  */
 package com.dkit.oopca5.client;
 
+import com.dkit.oopca5.Exceptions.DaoException;
 import com.dkit.oopca5.core.Course;
 import java.util.List;
+
+import com.dkit.oopca5.server.MySqlCourseDao;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -49,13 +52,13 @@ public class CourseManagerTest
      * Test of getCourse method, of class CourseManager.
      */
     @Test
-    public void testGetCourse()     //SAys its not the same but it is the same
+    public void testGetCourse() throws DaoException     //SAys its not the same but it is the same
     {
         System.out.println("getCourse");
         String courseId = "DK821";
-        CourseManager instance = new CourseManager();
+        MySqlCourseDao instance = new MySqlCourseDao();
         Course expResult = new Course("DK821","8","Computing in Software Development","Dundalk Institute of Technology");
-        Course result = instance.getCourse(courseId);
+        Course result = instance.findCourse(courseId);
         assertEquals(expResult, result);
        // Course{courseId='DK821', level='8', title='Computing in Software Development', institution='Dundalk Institute of Technoloy'}
     }
@@ -64,10 +67,9 @@ public class CourseManagerTest
      * Test of getAllCourses method, of class CourseManager.
      */
     @Test
-    public void testGetAllCourses()
-    {
+    public void testGetAllCourses() throws DaoException {
         System.out.println("getAllCourses");
-        CourseManager instance = new CourseManager();
+        MySqlCourseDao instance = new MySqlCourseDao();
         int expResult = 9;
         List<Course> courses = instance.getAllCourses();
         int result = courses.size();

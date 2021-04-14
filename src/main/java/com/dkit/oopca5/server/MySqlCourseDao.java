@@ -122,7 +122,7 @@ public class MySqlCourseDao extends MySqlDao implements CourseDaoInterface
                 throw new DaoException("displayAllCourses() " + e.getMessage());
             }
         }
-        return courses;     // may be empty
+        return courses; // may be empty
     }
 
 

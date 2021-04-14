@@ -5,12 +5,16 @@
  */
 package com.dkit.oopca5.client;
 
+import com.dkit.oopca5.Exceptions.DaoException;
 import com.dkit.oopca5.core.Course;
 import com.dkit.oopca5.core.Student;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.dkit.oopca5.server.MySqlCourseChoicesDAO;
+import com.dkit.oopca5.server.MySqlStudentDao;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -53,16 +57,15 @@ public class CourseChoicesManagerTest
      * Test of getStudentChoices method, of class CourseChoicesManager.
      */
     @Test
-    public void testGetStudentChoices()
-    {
+    public void testGetStudentChoices() throws DaoException {
         System.out.println("getStudentChoices");
         String caoNumber = "10000002";
-        StudentManager studentManager = new StudentManager();
-        CourseManager courseManager = new CourseManager();
-        CourseChoicesManager instance = new CourseChoicesManager(studentManager,courseManager);
+        MySqlCourseChoicesDAO instance = new MySqlCourseChoicesDAO();
         List<String> expResult = new ArrayList<>();
         expResult.add("MU567");
-        List<String> result = instance.getStudentChoices(caoNumber);
+        expResult.add("DK821");
+        expResult.add("DK821");
+        List<String> result = instance.findAllChoices(caoNumber);
         assertEquals(expResult, result);
     }
 
@@ -73,15 +76,16 @@ public class CourseChoicesManagerTest
     public void testUpdateChoices() throws Exception
     {
         System.out.println("updateChoices");
-        int caoNumber = 10000013;
-        StudentManager studentManager = new StudentManager();
-        CourseManager courseManager = new CourseManager();
-        CourseChoicesManager instance = new CourseChoicesManager(studentManager,courseManager);
+        int caoNumber = 10000005;
+        MySqlCourseChoicesDAO instance = new MySqlCourseChoicesDAO();
         List<String> result = new ArrayList<>();
-        result.add("DK821");
-        instance.updateChoices(caoNumber, result);
+        result.add("DK123");
         List<String> expResult = new ArrayList<>();
-        expResult = instance.getStudentChoices("10000013");
+        expResult.add("DK123");
+        for(int i = 0; i < expResult.size();i++)
+        {
+            instance.updateChoices(caoNumber,expResult.get(i));
+        }
 
         assertEquals(expResult, result);
     }
@@ -96,9 +100,7 @@ public class CourseChoicesManagerTest
         System.out.println("login");
         int caoNumber = 10000001;
         String password = "Password1";
-        StudentManager studentManager = new StudentManager();
-        CourseManager courseManager = new CourseManager();
-        CourseChoicesManager instance = new CourseChoicesManager(studentManager,courseManager);
+        MySqlStudentDao instance = new MySqlStudentDao();
         boolean expResult = true;
         boolean result = instance.login(caoNumber, password);
         assertEquals(expResult, result);
@@ -109,15 +111,12 @@ public class CourseChoicesManagerTest
      * Test of register method, of class CourseChoicesManager.
      */
     @Test
-    public void testRegister()
-    {
+    public void testRegister() throws DaoException {
         System.out.println("register");
-        Student S = new Student(12345677,"1998-09-11","Password12");
-        StudentManager studentManager = new StudentManager();
-        CourseManager courseManager = new CourseManager();
-        CourseChoicesManager instance = new CourseChoicesManager(studentManager,courseManager);
+        Student S = new Student(12345676,"1998-09-11","Password12");
+        MySqlStudentDao instance = new MySqlStudentDao();
         boolean expResult = true;
-        boolean result = instance.register(S);
+        boolean result = instance.registerStudent(S);
         assertEquals(expResult, result);
 
     }

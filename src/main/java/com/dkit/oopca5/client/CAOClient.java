@@ -11,6 +11,9 @@ import com.dkit.oopca5.core.Colours;
 import com.dkit.oopca5.core.Course;
 import com.dkit.oopca5.core.Student;
 import com.dkit.oopca5.client.RegexChecker;
+import com.dkit.oopca5.server.MySqlCourseChoicesDAO;
+import com.dkit.oopca5.server.MySqlCourseDao;
+import com.dkit.oopca5.server.MySqlStudentDao;
 
 
 import java.util.ArrayList;
@@ -24,18 +27,8 @@ public class CAOClient
 
     public static void main(String[] args)
     {
-        //load students
-        StudentManager studentManager = new StudentManager();
-
-        CourseManager courseManager = new CourseManager();
-
-        CourseChoicesManager choicesManager = new CourseChoicesManager(studentManager, courseManager);
 
         RegexChecker regexChecker = new RegexChecker();
-
-        Student s = new Student(0,"","");
-        s =studentManager.getStudent(10000001);
-        System.out.println(s);
 
 
         Student currentStudent = new Student(0,"","");
@@ -47,6 +40,9 @@ public class CAOClient
             try
             {
                 loginMenu2();
+
+                MySqlStudentDao studentDao = new MySqlStudentDao();
+
                 optionSelect = LoginMenuOptions.values()[Integer.parseInt(keyboard.nextLine().trim())];
                 switch(optionSelect)
                 {
@@ -106,7 +102,7 @@ public class CAOClient
 
                             newS = new Student(newCaoNum, newDoB, newPassword);
                         }
-                        if(choicesManager.register(newS))
+                        if(studentDao.registerStudent(newS))
                         {
                             System.out.println(Colours.GREEN + "Successfully Registered!" + Colours.RESET);
                             optionSelect = LoginMenuOptions.QUIT;
@@ -125,7 +121,7 @@ public class CAOClient
                         String password = kb.next();
 
 
-                        if(choicesManager.login(caoNum, password))
+                        if(studentDao.login(caoNum, password))
                         {
                             System.out.println(Colours.GREEN + "Successfully Logged In!" + Colours.RESET);
                             optionSelect = LoginMenuOptions.QUIT;
@@ -164,11 +160,9 @@ public class CAOClient
 
     private static void mainMenu(Student currentStudent)
     {
-        StudentManager studentManager = new StudentManager();
+        MySqlCourseDao courseDao = new MySqlCourseDao();
 
-        CourseManager courseManager = new CourseManager();
-
-        CourseChoicesManager choicesManager = new CourseChoicesManager(studentManager, courseManager);
+        MySqlCourseChoicesDAO choicesDAO = new MySqlCourseChoicesDAO();
 
         MenuOptions selectOption = MenuOptions.CONTINUE;
 
@@ -184,13 +178,13 @@ public class CAOClient
                     case DISPLAY_COURSE:
                         System.out.print("Please Enter the CourseId of the Course You Would Like To Display: ");
                         String courseId = kb.next();
-                        System.out.println(courseManager.getCourse(courseId));
+                        System.out.println(courseDao.findCourse(courseId));
 
                         break;
 
                     case DISPLAY_ALL_COURSES:
-                        List<Course> courses = courseManager.getAllCourses();
-                        for(int i = 0; i < choicesManager.getAllCourses().size(); i++)
+                        List<Course> courses = courseDao.getAllCourses();
+                        for(int i = 0; i < courseDao.getAllCourses().size(); i++)
                         {
                             System.out.println(courses.get(i));
                         }
@@ -200,7 +194,7 @@ public class CAOClient
                     case DISPLAY_CURRENT_CHOICES:
                         int numberCao = currentStudent.getCaoNumber();
                         String caoNumber = Integer.toString(numberCao);
-                        List<String> choices = choicesManager.getStudentChoices(caoNumber);
+                        List<String> choices = choicesDAO.findAllChoices(caoNumber);
                         for(int i = 0; i < choices.size(); i++)
                         {
                             System.out.println(choices.get(i));
@@ -220,7 +214,10 @@ public class CAOClient
                             String newCourseID = kb.next();
                             newChoices.add(newCourseID);
                         }
-                        choicesManager.updateChoices(caoNum2, newChoices);
+                        for(int i = 0; i < newChoices.size();i++)
+                        {
+                            choicesDAO.updateChoices(caoNum2,newChoices.get(i));
+                        }
                         break;
 
 

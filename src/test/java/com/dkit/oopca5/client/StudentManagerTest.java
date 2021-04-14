@@ -5,7 +5,10 @@
  */
 package com.dkit.oopca5.client;
 
+import com.dkit.oopca5.Exceptions.DaoException;
 import com.dkit.oopca5.core.Student;
+import com.dkit.oopca5.server.MySqlCourseDao;
+import com.dkit.oopca5.server.MySqlStudentDao;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -48,13 +51,12 @@ public class StudentManagerTest
      * Test of getStudent method, of class StudentManager.
      */
     @Test
-    public void testGetStudent()
-    {
+    public void testGetStudent() throws DaoException {
         System.out.println("getStudent");
         int caoNumber = 10000001;
-        StudentManager instance = new StudentManager();
+        MySqlStudentDao instance = new MySqlStudentDao();
         Student expResult = new Student(10000001,"2001-09-04","Password1");
-        Student result = instance.getStudent(caoNumber);
+        Student result = instance.findStudent(caoNumber);
         assertEquals(expResult, result);
         //Student{caoNumber=10000001, dateOfBirth='2001-09-04', password='Password1'}
     }
