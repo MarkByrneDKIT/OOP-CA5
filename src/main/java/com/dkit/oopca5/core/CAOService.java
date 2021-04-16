@@ -12,5 +12,19 @@ public class CAOService
 
     public static final String REGISTER_COMMAND = "REGISTER";
     public static final String SUCCESSFUL_REGISTER = "REGISTERED";
-    public static final String FAILED_REGISTER = "REG FAILED";
+    public static final String FAILED_REGISTER = "REG FAILED";              //DONE
+
+    public static final String LOGIN_COMMAND = "LOGIN";
+    public static final String SUCCESSFUL_LOGIN = "LOGIN SUCCESSFUL";
+    public static final String FAILED_LOGIN = "LOGIN FAILED";
+
+    public static final String DISPLAY_COURSE = "FIND COURSE";
+    public static final String DISPLAY_ALL_COURSES = "FIND ALL COURSES";
+
+    public static final String DISPLAY_CURRENT_CHOICES = "DISPLAY CURRENT CHOICES";
+
+    public static final String UPDATE_CURRENT_CHOICES = "UPDATE CURRENT CHOICES";
+
+
+
 }

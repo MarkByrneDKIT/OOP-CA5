@@ -7,6 +7,7 @@ package com.dkit.oopca5.client;
  */
 
 import com.dkit.oopca5.Exceptions.DaoException;
+import com.dkit.oopca5.core.CAOService;
 import com.dkit.oopca5.core.Colours;
 import com.dkit.oopca5.core.Course;
 import com.dkit.oopca5.core.Student;
@@ -16,6 +17,11 @@ import com.dkit.oopca5.server.MySqlCourseDao;
 import com.dkit.oopca5.server.MySqlStudentDao;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -35,131 +41,148 @@ public class CAOClient
 
         LoginMenuOptions optionSelect = LoginMenuOptions.CONTINUE;
 
-        while(optionSelect != LoginMenuOptions.QUIT)
-        {
-            try
-            {
-                loginMenu2();
+        Scanner in = new Scanner(System.in);
+        try {
+            Socket socket = new Socket(CAOService.HOSTNAME, 8080);  // connect to server socket
+            System.out.println("Client: Port# of this client : " + socket.getLocalPort());
+            System.out.println("Client: Port# of Server :" + socket.getPort());
 
-                MySqlStudentDao studentDao = new MySqlStudentDao();
+            Scanner socketReader = new Scanner(socket.getInputStream());
 
-                optionSelect = LoginMenuOptions.values()[Integer.parseInt(keyboard.nextLine().trim())];
-                switch(optionSelect)
-                {
-                    case REGISTER:
-                        boolean success1 = false;
-                        boolean success2 = false;
-                        boolean success3 = false;
-                        Student newS = new Student(0,"","");
-                        int newCaoNum = 0;
-                        String newDoB = "";
-                        String newPassword = "";
+            System.out.println("Client message: The Client is running and has connected to the server");
 
-                        while(success1 == false && success2 == false && success3 == false)
-                        {
-                            try {
-                                String pattern1 = "^[0-9]{8}$";
-                                System.out.print("Please Enter Your CaoNumber: ");
-                                newCaoNum = kb.nextInt();
-                                String caoNumString = Integer.toString(newCaoNum);
-                                if(RegexChecker.checkFormat(caoNumString,pattern1))
-                                {
-                                    success1 = true;
+            OutputStream os = socket.getOutputStream();
+            PrintWriter socketWriter = new PrintWriter(os, true);
+
+
+            while (optionSelect != LoginMenuOptions.QUIT) {
+                try {
+                    loginMenu2();
+
+                    optionSelect = LoginMenuOptions.values()[Integer.parseInt(keyboard.nextLine().trim())];
+                    switch (optionSelect) {
+                        case REGISTER:
+                            boolean success1 = false;
+                            boolean success2 = false;
+                            boolean success3 = false;
+                            Student newS = new Student(0, "", "");
+                            int newCaoNum = 0;
+                            String newDoB = "";
+                            String newPassword = "";
+
+                            while (success1 == false && success2 == false && success3 == false) {
+                                try {
+                                    String pattern1 = "^[0-9]{8}$";
+                                    System.out.print("Please Enter Your CaoNumber: ");
+                                    newCaoNum = kb.nextInt();
+                                    String caoNumString = Integer.toString(newCaoNum);
+                                    if (RegexChecker.checkFormat(caoNumString, pattern1)) {
+                                        success1 = true;
+                                    }
+                                } catch (IllegalArgumentException e) {
+                                    e.printStackTrace();
                                 }
+                                try {
+                                    String pattern2 = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$";      //YYYY-MM-DD
+
+                                    System.out.print("Please Enter your Date of Birth: ");
+                                    newDoB = kb.next();
+
+                                    if (RegexChecker.checkFormat(newDoB, pattern2)) {
+                                        success2 = true;
+                                    }
+                                } catch (IllegalArgumentException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    String pattern3 = "^([A-Za-z][0-9])*";  //More than 7 And Contains Letters And Numbers
+                                    System.out.print("Please Enter Your Password: ");
+                                    newPassword = kb.next();
+
+                                    if (RegexChecker.checkFormat(newPassword, pattern3)) {
+                                        success3 = true;
+                                    }
+                                } catch (IllegalArgumentException e) {
+                                    e.printStackTrace();
+                                }
+
+                               // newS = new Student(newCaoNum, newDoB, newPassword);
                             }
-                            catch (IllegalArgumentException e) {
-                                e.printStackTrace();
-                            }
-                            try
+
+                            String regCommand = CAOService.REGISTER_COMMAND + CAOService.BREAKING_CHARACTER + newCaoNum + CAOService.BREAKING_CHARACTER + newDoB + CAOService.BREAKING_CHARACTER + newPassword;
+                            socketWriter.println(regCommand);
+
+                            if (regCommand.startsWith(CAOService.REGISTER_COMMAND))
                             {
-                                String pattern2 = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$";      //YYYY-MM-DD
-
-                                System.out.print("Please Enter your Date of Birth: ");
-                                newDoB = kb.next();
-
-                                if(RegexChecker.checkFormat(newDoB,pattern2))
-                                {
-                                    success2 = true;
-                                }
-                            }
-                            catch (IllegalArgumentException e) {
-                                e.printStackTrace();
-                            }
-                            try
+                                String reply = socketReader.nextLine();
+                                System.out.println("Client message: Response from server: " + reply);
+                            } else
                             {
-                                String pattern3 = "^([A-Za-z][0-9])*";  //More than 7 And Contains Letters And Numbers
-                                System.out.print("Please Enter Your Password: ");
-                                newPassword = kb.next();
-
-                                if(RegexChecker.checkFormat(newPassword,pattern3))
-                                {
-                                    success3 = true;
-                                }
-                            }
-                            catch (IllegalArgumentException e) {
-                                e.printStackTrace();
+                                String input = socketReader.nextLine();
+                                System.out.println("Client message: Response from server: \"" + input + "\"");
                             }
 
-                            newS = new Student(newCaoNum, newDoB, newPassword);
-                        }
-                        if(studentDao.registerStudent(newS))
-                        {
-                            System.out.println(Colours.GREEN + "Successfully Registered!" + Colours.RESET);
-                            optionSelect = LoginMenuOptions.QUIT;
-                        }
-                        else
-                        {
-                            System.out.println(Colours.RED + "Failed to register" + Colours.RESET);
-                        }
-                        break;
 
-                    case LOGIN:
-                        System.out.print("Please Enter Your CaoNumber: ");
-                        int caoNum = kb.nextInt();
-                        currentStudent.setCaoNumber(caoNum);
-                        System.out.print("Please Enter Your Password: ");
-                        String password = kb.next();
+                            break;
+
+                        case LOGIN:
+                            System.out.print("Please Enter Your CaoNumber: ");
+                            int caoNum = kb.nextInt();
+                            currentStudent.setCaoNumber(caoNum);
+                            System.out.print("Please Enter Your Password: ");
+                            String password = kb.next();
 
 
-                        if(studentDao.login(caoNum, password))
-                        {
-                            System.out.println(Colours.GREEN + "Successfully Logged In!" + Colours.RESET);
-                            optionSelect = LoginMenuOptions.QUIT;
-                        }
-                        else
-                        {
-                            System.out.println(Colours.RED + "Failed To Log In" + Colours.RESET);
-                        }
-                        break;
+                            String regCommand2 = CAOService.LOGIN_COMMAND + CAOService.BREAKING_CHARACTER + caoNum + CAOService.BREAKING_CHARACTER + password;
+                            socketWriter.println(regCommand2);
 
-                    case QUIT:
-                        break;
+                            if(regCommand2.startsWith(CAOService.LOGIN_COMMAND))
+                            {
+                                String reply = socketReader.nextLine();
+                                System.out.println("Client message: Response from server: " + reply);
+                                optionSelect = LoginMenuOptions.QUIT;
 
-                    default:
-                        System.out.println(Colours.RED + "Selection out of range. Try again" + Colours.RESET);
+                            }
+                            else
+                            {
+                                String input = socketReader.nextLine();
+                                System.out.println("Client message: Response from server: \"" + input + "\"");
+                            }
+
+                            break;
+
+                        case QUIT:
+                            break;
+
+                        default:
+                            System.out.println(Colours.RED + "Selection out of range. Try again" + Colours.RESET);
+                    }
+                } catch (IllegalArgumentException e) {
+                    System.out.println(Colours.RED + "Selection out of range. Please try again." + Colours.RESET);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.out.println(Colours.RED + "Selection out of range. Please try again." + Colours.RESET);
                 }
             }
-            catch(IllegalArgumentException e)
-            {
-                System.out.println(Colours.RED + "Selection out of range. Please try again." + Colours.RESET);
-            }
-            catch(ArrayIndexOutOfBoundsException e)
-            {
-                System.out.println(Colours.RED + "Selection out of range. Please try again." + Colours.RESET);
-            }
-            catch (DaoException throwables)
-            {
-                throwables.printStackTrace();
-            }
-        }
+            socketWriter.close();
+            socketReader.close();
+            socket.close();
 
+        } catch (IOException e) {
+            System.out.println("Client message: IOException: "+e);
+
+        }
         mainMenu(currentStudent);
+
+
 
     }
 
 
     private static void mainMenu(Student currentStudent)
     {
+
+
+
         MySqlCourseDao courseDao = new MySqlCourseDao();
 
         MySqlCourseChoicesDAO choicesDAO = new MySqlCourseChoicesDAO();
