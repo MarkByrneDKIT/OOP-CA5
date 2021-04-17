@@ -1,35 +1,9 @@
 package com.dkit.oopca5.server;
 
-/**
- * SERVER  - MULTITHREADED                                         March 2021
- * <p>
- * Server accepts client connections, creates a ClientHandler to handle the
- * Client communication, creates a socket and passes the socket to the handler,
- * runs the handler in a separate Thread.
- * <p>
- * <p>
- * The handler reads requests from clients, and sends replies to clients, all in
- * accordance with the rules of the protocol. as specified in
- * "ClientServerBasic" sample program
- * <p>
- * The following PROTOCOL is implemented:
- * <p>
- * If ( the Server receives the request "Time", from a Client ) then : the
- * server will send back the current time
- * <p>
- * If ( the Server receives the request "Echo message", from a Client ) then :
- * the server will send back the message
- * <p>
- * If ( the Server receives the request it does not recognize ) then : the
- * server will send back the message "Sorry, I don't understand"
- * <p>
- * This is an example of a simple protocol, where the server's response is based
- * on the client's request.
- *
- *  Each client is handled by a ClientHandler running in a separate worker Thread
- *  which allows the Server to continually listen for and handle multiple clients
+/*
+ *   D00228088
+ *    Mark Byrne
  */
-
 
 import com.dkit.oopca5.Exceptions.DaoException;
 import com.dkit.oopca5.core.CAOService;

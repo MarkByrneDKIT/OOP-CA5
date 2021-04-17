@@ -1,5 +1,9 @@
 package com.dkit.oopca5.core;
 
+/*
+ *   D00228088
+ *    Mark Byrne
+ */
 
 import java.util.Objects;
 
