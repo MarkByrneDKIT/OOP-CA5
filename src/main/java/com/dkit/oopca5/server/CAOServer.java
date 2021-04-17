@@ -33,6 +33,7 @@ package com.dkit.oopca5.server;
 
 import com.dkit.oopca5.Exceptions.DaoException;
 import com.dkit.oopca5.core.CAOService;
+import com.dkit.oopca5.core.Course;
 import com.dkit.oopca5.core.Student;
 import com.dkit.oopca5.server.*;
 
@@ -44,6 +45,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CAOServer
@@ -171,27 +173,93 @@ public class CAOServer
 
 
                     }
-                    else if (parts[0].equals(CAOService.DISPLAY_COURSE))
+                    else if (parts[0].equals(CAOService.DISPLAY_COURSE_COMMAND))
                     {
+                        Course course = new Course("","","","");
                         try
                         {
-                        courseDao.findCourse(parts[1]);
-                        }catch(DaoException throwables)
+                            course = courseDao.findCourse(parts[1]);
+                            System.out.println(course);
+                        }
+                        catch(DaoException throwables)
                         {
                             System.out.println("Dao exception Thrown");
                         }
-                    }
-                    else if (parts[0].equals(CAOService.DISPLAY_ALL_COURSES))
-                    {
+                        if(course == new Course("","","",""))
+                        {
+                            socketWriter.println(CAOService.FAILED_DISPLAY_COURSE);
+                        }
+                        else
+                        {
+                            socketWriter.println(CAOService.SUCCESSFUL_DISPLAY_COURSE + CAOService.BREAKING_CHARACTER + course);
+                        }
 
                     }
-                    else if (parts[0].equals(CAOService.DISPLAY_CURRENT_CHOICES))
+                    else if (parts[0].equals(CAOService.DISPLAY_ALL_COURSES_COMMAND))
                     {
+                        List<Course> courses = new ArrayList<>();
+                        try
+                        {
+                            courses = courseDao.getAllCourses();
+                        } catch(DaoException throwables)
+                        {
+                            System.out.println("Dao exception Thrown");
+                        }
+                        if(courses.isEmpty())
+                        {
+                            socketWriter.println(CAOService.FAILED_DISPLAY_ALL_COURSES);
+                        }
+                        else
+                        {
+                            socketWriter.println(CAOService.SUCCESSFUL_DISPLAY_ALL_COURSES + CAOService.BREAKING_CHARACTER + courses);
+                        }
 
                     }
-                    else if (parts[0].equals(CAOService.UPDATE_CURRENT_CHOICES))
+                    else if (parts[0].equals(CAOService.DISPLAY_CURRENT_CHOICES_COMMAND))
                     {
+                        List<String> choices = new ArrayList<>();
+                        try
+                        {
+                            choices = choicesDao.findAllChoices(parts[1]);
+                        } catch(DaoException throwables)
+                        {
+                            System.out.println("Dao exception Thrown");
+                        }
+                        if(choices.isEmpty())
+                        {
+                            socketWriter.println(CAOService.FAILED_DISPLAY_ALL_COURSES);
+                        }
+                        else
+                        {
+                            socketWriter.println(CAOService.SUCCESSFUL_DISPLAY_ALL_COURSES + CAOService.BREAKING_CHARACTER + choices);
+                        }
 
+
+
+
+                    }
+                    else if (parts[0].equals(CAOService.UPDATE_CURRENT_CHOICES_COMMAND))
+                    {
+                    /*
+                        try
+                        {
+
+
+                        }catch()
+                        {
+
+                        }
+
+                        if()
+                        {
+                            socketWriter.println(CAOService.FAILED_UPDATE_CURRENT_CHOICES);
+                        }
+                        else
+                        {
+                            socketWriter.println(CAOService.SUCCESSFUL_UPDATE_CURRENT_CHOICES);
+                        }
+
+                     */
                     }
 
                     else

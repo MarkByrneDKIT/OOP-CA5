@@ -189,6 +189,20 @@ public class CAOClient
 
         MenuOptions selectOption = MenuOptions.CONTINUE;
 
+        Scanner in = new Scanner(System.in);
+        try {
+            Socket socket = new Socket(CAOService.HOSTNAME, 8080);  // connect to server socket
+            System.out.println("Client: Port# of this client : " + socket.getLocalPort());
+            System.out.println("Client: Port# of Server :" + socket.getPort());
+
+            Scanner socketReader = new Scanner(socket.getInputStream());
+
+            System.out.println("Client message: The Client is running and has connected to the server");
+
+            OutputStream os = socket.getOutputStream();
+            PrintWriter socketWriter = new PrintWriter(os, true);
+
+
         while(selectOption != MenuOptions.QUIT)
         {
             try
@@ -196,33 +210,79 @@ public class CAOClient
                 menu();
                 selectOption = MenuOptions.values()[Integer.parseInt(keyboard.nextLine().trim())];
 
+
                 switch (selectOption)
                 {
                     case DISPLAY_COURSE:
                         System.out.print("Please Enter the CourseId of the Course You Would Like To Display: ");
                         String courseId = kb.next();
+                        /*
                         System.out.println(courseDao.findCourse(courseId));
+                        */
 
-                        break;
+                        String regCommand3 = CAOService.DISPLAY_COURSE_COMMAND + CAOService.BREAKING_CHARACTER + courseId;
+                        socketWriter.println(regCommand3);
 
-                    case DISPLAY_ALL_COURSES:
-                        List<Course> courses = courseDao.getAllCourses();
-                        for(int i = 0; i < courseDao.getAllCourses().size(); i++)
+                        if(regCommand3.startsWith(CAOService.DISPLAY_COURSE_COMMAND))
                         {
-                            System.out.println(courses.get(i));
+                            String reply = socketReader.nextLine();
+                            System.out.println("Client message: Response from server: " + reply);
+                        }
+                        else
+                        {
+                            String input = socketReader.nextLine();
+                            System.out.println("Client message: Response from server: \"" + input + "\"");
                         }
                         break;
+
+
+
+                    case DISPLAY_ALL_COURSES:
+                        String regCommand4 = CAOService.DISPLAY_ALL_COURSES_COMMAND;
+                        socketWriter.println(regCommand4);
+
+                        if(regCommand4.startsWith(CAOService.DISPLAY_ALL_COURSES_COMMAND))
+                        {
+                            String reply = socketReader.nextLine();
+                            System.out.println("Client message: Response from server: " + reply);
+                        }
+                        else
+                        {
+                            String input = socketReader.nextLine();
+                            System.out.println("Client message: Response from server: \"" + input + "\"");
+                        }
+                        break;
+
 
 
                     case DISPLAY_CURRENT_CHOICES:
                         int numberCao = currentStudent.getCaoNumber();
                         String caoNumber = Integer.toString(numberCao);
+                        /*
                         List<String> choices = choicesDAO.findAllChoices(caoNumber);
                         for(int i = 0; i < choices.size(); i++)
                         {
                             System.out.println(choices.get(i));
                         }
+                         */
+                        String regCommand5 = CAOService.DISPLAY_CURRENT_CHOICES_COMMAND + CAOService.BREAKING_CHARACTER + caoNumber;
+                        socketWriter.println(regCommand5);
+
+                        if(regCommand5.startsWith(CAOService.DISPLAY_CURRENT_CHOICES_COMMAND))
+                        {
+                            String reply = socketReader.nextLine();
+                            System.out.println("Client message: Response from server: " + reply);
+                        }
+                        else
+                        {
+                            String input = socketReader.nextLine();
+                            System.out.println("Client message: Response from server: \"" + input + "\"");
+                        }
+
+
                         break;
+
+
 
                     case UPDATE_CURRENT_CHOICES:
                         System.out.print("How many choices would you like to add? ->");
@@ -237,6 +297,7 @@ public class CAOClient
                             String newCourseID = kb.next();
                             newChoices.add(newCourseID);
                         }
+
                         for(int i = 0; i < newChoices.size();i++)
                         {
                             choicesDAO.updateChoices(caoNum2,newChoices.get(i));
@@ -266,7 +327,14 @@ public class CAOClient
             {
                 throwables.printStackTrace();
             }
+        }socketWriter.close();
+            socketReader.close();
+            socket.close();
+
+        } catch (IOException e) {
+            System.out.println("Client message: IOException: " + e);
         }
+
     }
 
     private static void loginMenu2()

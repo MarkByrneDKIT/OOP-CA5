@@ -14,7 +14,7 @@ import java.util.List;
 public class MySqlCourseDao extends MySqlDao implements CourseDaoInterface
 {
 
-    public Course findCourse(String id) throws DaoException              //TODO FIX SQL statement
+    public Course findCourse(String id) throws DaoException
     {
         Connection con = null;
         PreparedStatement ps = null;

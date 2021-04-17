@@ -16,14 +16,24 @@ public class CAOService
 
     public static final String LOGIN_COMMAND = "LOGIN";
     public static final String SUCCESSFUL_LOGIN = "LOGIN SUCCESSFUL";
-    public static final String FAILED_LOGIN = "LOGIN FAILED";
+    public static final String FAILED_LOGIN = "LOGIN FAILED";       //DONE
 
-    public static final String DISPLAY_COURSE = "FIND COURSE";
-    public static final String DISPLAY_ALL_COURSES = "FIND ALL COURSES";
+    public static final String DISPLAY_COURSE_COMMAND = "FIND COURSE";
+    public static final String FAILED_DISPLAY_COURSE = "FAILED FIND COURSE";
+    public static final String SUCCESSFUL_DISPLAY_COURSE = "SUCCESSFUL FIND COURSE";
 
-    public static final String DISPLAY_CURRENT_CHOICES = "DISPLAY CURRENT CHOICES";
+    public static final String DISPLAY_ALL_COURSES_COMMAND = "FIND ALL COURSES";
+    public static final String FAILED_DISPLAY_ALL_COURSES = "FAILED FIND ALL COURSES";
+    public static final String SUCCESSFUL_DISPLAY_ALL_COURSES = "SUCCESSFUL FIND ALL COURSES";
 
-    public static final String UPDATE_CURRENT_CHOICES = "UPDATE CURRENT CHOICES";
+    public static final String DISPLAY_CURRENT_CHOICES_COMMAND = "DISPLAY CURRENT CHOICES";
+    public static final String FAILED_DISPLAY_CURRENT_CHOICES = "DISPLAY CURRENT CHOICES";
+    public static final String SUCCESSFUL_DISPLAY_CURRENT_CHOICES = "DISPLAY CURRENT CHOICES";
+
+
+    public static final String UPDATE_CURRENT_CHOICES_COMMAND = "UPDATE CURRENT CHOICES";
+    public static final String FAILED_UPDATE_CURRENT_CHOICES = "FAILED UPDATE CURRENT CHOICES";
+    public static final String SUCCESSFUL_UPDATE_CURRENT_CHOICES = "SUCCESSFUL UPDATE CURRENT CHOICES";
 
 
 
