@@ -123,10 +123,13 @@ public class CAOClient
                             {
                                 String reply = socketReader.nextLine();
                                 System.out.println("Client message: Response from server: " + reply);
+                                optionSelect = LoginMenuOptions.QUIT;
+
                             } else
                             {
                                 String input = socketReader.nextLine();
                                 System.out.println("Client message: Response from server: \"" + input + "\"");
+
                             }
 
 

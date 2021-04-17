@@ -149,7 +149,9 @@ public class CAOServer
                     }
                     else if (parts[0].equals(CAOService.DISPLAY_COURSE_COMMAND))
                     {
-                        Course course = new Course("","","","");
+                        Course course = null;
+                        Course fail = new Course("","","","");
+
                         try
                         {
                             course = courseDao.findCourse(parts[1]);
@@ -159,7 +161,7 @@ public class CAOServer
                         {
                             System.out.println("Dao exception Thrown");
                         }
-                        if(course == new Course("","","",""))
+                        if(course == fail)
                         {
                             socketWriter.println(CAOService.FAILED_DISPLAY_COURSE);
                         }
@@ -201,11 +203,11 @@ public class CAOServer
                         }
                         if(choices.isEmpty())
                         {
-                            socketWriter.println(CAOService.FAILED_DISPLAY_ALL_COURSES);
+                            socketWriter.println(CAOService.FAILED_DISPLAY_CURRENT_CHOICES);
                         }
                         else
                         {
-                            socketWriter.println(CAOService.SUCCESSFUL_DISPLAY_ALL_COURSES + CAOService.BREAKING_CHARACTER + choices);
+                            socketWriter.println(CAOService.SUCCESSFUL_DISPLAY_CURRENT_CHOICES + CAOService.BREAKING_CHARACTER + choices);
                         }
 
 
